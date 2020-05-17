@@ -5,7 +5,7 @@
 	-sm_setscore changed to sm_setscore <name or #userid> <Kills> <Deaths><Stars> in CSS.
 	-Added sm_resetscore_savescores 1/0 - To save scores when players retry.
 	-Added sm_resetscore_cost "amount" - If you want charge money by reset, 0 to disable.
-	
+
 	V1.5fix
 	- Fixed an error when a invalid player disconnects.
 */
@@ -38,28 +38,28 @@ public Plugin myinfo =
 };
 
 public void OnPluginStart()
-{  
+{
 	HookEvent("player_disconnect", PlayerDisconnect);
-	
+
 	char theFolder[40];
 	GetGameFolderName(theFolder, sizeof(theFolder));
 	CSGO = StrEqual(theFolder, "csgo");
-	
+
 	RegConsoleCmd("resetscore", CommandResetScore);
 	RegConsoleCmd("rs", CommandResetScore);
-	
+
 	RegAdminCmd("sm_resetplayer", CommandResetPlayer, ADMFLAG_SLAY);
 	RegAdminCmd("sm_reset", CommandResetPlayer, ADMFLAG_SLAY);
 	RegAdminCmd("sm_setstars", CommandSetStars, ADMFLAG_SLAY);
-	
+
 	LoadTranslations("common.phrases");
 	LoadTranslations("abner_resetscore.phrases");
-	
-	ServerCommand("mp_backup_round_file \"\"");
-	ServerCommand("mp_backup_round_file_last \"\"");
-	ServerCommand("mp_backup_round_file_pattern \"\"");
-	ServerCommand("mp_backup_round_auto 0");
-		
+
+	//ServerCommand("mp_backup_round_file \"\"");
+	//ServerCommand("mp_backup_round_file_last \"\"");
+	//ServerCommand("mp_backup_round_file_pattern \"\"");
+	//ServerCommand("mp_backup_round_auto 0");
+
 	if(CSGO)
 	{
 		RegAdminCmd("sm_setassists", CommandSetAssists, ADMFLAG_SLAY);
@@ -70,18 +70,18 @@ public void OnPluginStart()
 	{
 		RegAdminCmd("sm_setscore", CommandSetScore, ADMFLAG_SLAY);
 	}
-	
+
 	AutoExecConfig();
 	CreateConVar("abner_resetscore_version", PLUGIN_VERSION, "Resetscore Version", FCVAR_NOTIFY|FCVAR_REPLICATED);
 	hPluginEnable = CreateConVar("sm_resetscore", "1", "Enable/Disable the Plugin.");
 	hPublic = CreateConVar("sm_resetscore_public", "1", "Enable or disable the messages when player reset score.");
 	hSaveScores = CreateConVar("sm_resetscore_savescores", "1", "Save scores when players retry.");
 	hResetCost = CreateConVar("sm_resetscore_cost", "0", "Money cost to reset score.");
-	
+
 	playersList = new ArrayList(64);
 	scores = new ArrayList(4);
-	
-	for(int i = 0;i < GetMaxClients();i++)
+
+	for(int i = 0; i < MaxClients; i++)
 	{
 		if(!IsValidClient(i))
 			continue;
@@ -94,17 +94,17 @@ public void OnMapStart()
 {
 	playersList = new ArrayList(64);
 	scores = new ArrayList(4);
-	ServerCommand("mp_backup_round_file \"\"");
-	ServerCommand("mp_backup_round_file_last \"\"");
-	ServerCommand("mp_backup_round_file_pattern \"\"");
-	ServerCommand("mp_backup_round_auto 0");
-}  
+	//ServerCommand("mp_backup_round_file \"\"");
+	//ServerCommand("mp_backup_round_file_last \"\"");
+	//ServerCommand("mp_backup_round_file_pattern \"\"");
+	//ServerCommand("mp_backup_round_auto 0");
+}
 
 public void OnClientPutInServer(int client)
 {
 	if(GetConVarInt(hSaveScores) != 1 || IsFakeClient(client))
 		return;
-	
+
 	char steamId[64];
 	GetClientAuthId(client, AuthId_Steam2, steamId, sizeof(steamId));
 	int infoArray[5];
@@ -141,7 +141,7 @@ public void PlayerDisconnect(Handle event,const char[] name,bool dontBroadcast)
 		return;
 	if(GetConVarInt(hSaveScores) != 1 || IsFakeClient(client))
 		return;
-		
+
 	char steamId[64];
 	GetClientAuthId(client, AuthId_Steam2, steamId, sizeof(steamId));
 	int infoArray[5];
@@ -161,13 +161,13 @@ public void PlayerDisconnect(Handle event,const char[] name,bool dontBroadcast)
 }
 
 public Action CommandResetScore(int client, int args)
-{                        
+{
 	if(GetConVarInt(hPluginEnable) == 0)
 	{
 		CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "Plugin Disabled");
 		return Plugin_Continue;
 	}
-	
+
 	if(GetClientDeaths(client) == 0 && GetClientFrags(client) == 0 && CS_GetMVPCount(client) == 0)
 	{
 		if(!CSGO || CS_GetClientAssists(client) == 0)
@@ -176,7 +176,7 @@ public Action CommandResetScore(int client, int args)
 			return Plugin_Continue;
 		}
 	}
-	
+
 	int cost = GetConVarInt(hResetCost);
 	int money = GetEntProp(client, Prop_Send, "m_iAccount");
 	if(cost > 0 && money < cost)
@@ -184,10 +184,10 @@ public Action CommandResetScore(int client, int args)
 		CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "No Money", cost);
 		return Plugin_Continue;
 	}
-	
+
 	ResetPlayer(client);
 	SetEntProp(client, Prop_Send, "m_iAccount", money-cost);
-	
+
 	char name[MAX_NAME_LENGTH];
 	GetClientName(client, name, sizeof(name));
 	if(GetConVarInt(hPublic) == 1)
@@ -226,9 +226,9 @@ void ResetPlayer(int client)
 		}
 	}
 }
-	
+
 public Action CommandResetPlayer(int client, int args)
-{                           
+{
 	char arg1[32];
 	GetCmdArg(1, arg1, sizeof(arg1));
 
@@ -237,12 +237,12 @@ public Action CommandResetPlayer(int client, int args)
 		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_resetplayer <name or #userid>");
 		return Plugin_Continue;
 	}
- 	
+
 	char target_name[MAX_TARGET_LENGTH];
 	char nameadm[MAX_NAME_LENGTH];
 	GetClientName(client, nameadm, sizeof(nameadm));
 	int target_list[MAXPLAYERS], target_count; bool tn_is_ml;
-	
+
 	if ((target_count = ProcessTargetString(
 	arg1,
 	client,
@@ -266,7 +266,7 @@ public Action CommandResetPlayer(int client, int args)
 }
 
 public Action CommandSetScore(int client, int args)
-{                           
+{
   	char arg1[32], arg2[20], arg3[20],arg4[20];
 	GetCmdArg(1, arg1, sizeof(arg1));
 	GetCmdArg(2, arg2, sizeof(arg2));
@@ -275,18 +275,18 @@ public Action CommandSetScore(int client, int args)
 	int kills = StringToInt(arg2);
 	int deaths = StringToInt(arg3);
 	int stars = StringToInt(arg4);
-      
+
 	if (args != 4)
 	{
 		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setscore <name or #userid> <Kills> <Deaths><Stars>");
 		return Plugin_Continue;
 	}
- 	
+
 	char target_name[MAX_TARGET_LENGTH];
 	char nameadm[MAX_NAME_LENGTH];
 	GetClientName(client, nameadm, sizeof(nameadm));
 	int target_list[MAXPLAYERS], target_count; bool tn_is_ml;
-	
+
 	if ((target_count = ProcessTargetString(
 	arg1,
 	client,
@@ -307,19 +307,19 @@ public Action CommandSetScore(int client, int args)
 		SetEntProp(target_list[i], Prop_Data, "m_iDeaths", deaths);
 		CS_SetMVPCount(target_list[i], stars);
 	}
-	
+
 	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Score", target_name);
 	return Plugin_Continue;
 }
 
 public Action CommandSetScoreCSGO(int client, int args)
-{                           
+{
   	if (args != 6)
 	{
 		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setscore <name or #userid> <Kills> <Deaths><Assists><Stars><Points>");
 		return Plugin_Continue;
 	}
-	
+
 	char arg1[32], arg2[20], arg3[20], arg4[20], arg5[20], arg6[20];
 	GetCmdArg(1, arg1, sizeof(arg1));
 	GetCmdArg(2, arg2, sizeof(arg2));
@@ -332,12 +332,12 @@ public Action CommandSetScoreCSGO(int client, int args)
 	int assists = StringToInt(arg4);
 	int stars = StringToInt(arg5);
 	int points = StringToInt(arg6);
- 	
+
 	char target_name[MAX_TARGET_LENGTH];
 	char nameadm[MAX_NAME_LENGTH];
 	GetClientName(client, nameadm, sizeof(nameadm));
 	int target_list[MAXPLAYERS], target_count; bool tn_is_ml;
-	
+
 	if ((target_count = ProcessTargetString(
 	arg1,
 	client,
@@ -360,18 +360,18 @@ public Action CommandSetScoreCSGO(int client, int args)
 		CS_SetMVPCount(target_list[i], stars);
 		CS_SetClientContributionScore(target_list[i], points);
 	}
-	
+
 	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Score", target_name);
 	return Plugin_Continue;
 }
 
 public Action CommandSetPoints(int client, int args)
-{                           
+{
 	char arg1[32], arg2[20];
 	GetCmdArg(1, arg1, sizeof(arg1));
 	GetCmdArg(2, arg2, sizeof(arg2));
 	int points = StringToInt(arg2);
-		
+
 	if (args != 2)
 	{
 		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setpoints <name or #userid> <points>");
@@ -398,7 +398,7 @@ public Action CommandSetPoints(int client, int args)
 	}
 
 	for (int i = 0; i < target_count; i++)
-	{   
+	{
 		CS_SetClientContributionScore(target_list[i], points);
 	}
 
@@ -407,12 +407,12 @@ public Action CommandSetPoints(int client, int args)
 }
 
 public Action CommandSetAssists(int client, int args)
-{                           
+{
 	char arg1[32], arg2[20];
 	GetCmdArg(1, arg1, sizeof(arg1));
 	GetCmdArg(2, arg2, sizeof(arg2));
 	int assists = StringToInt(arg2);
-		
+
 	if (args != 2)
 	{
 		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setassists <name or #userid> <assists>");
@@ -439,7 +439,7 @@ public Action CommandSetAssists(int client, int args)
 	}
 
 	for (int i = 0; i < target_count; i++)
-	{   
+	{
 		CS_SetClientAssists(target_list[i], assists);
 	}
 
@@ -448,7 +448,7 @@ public Action CommandSetAssists(int client, int args)
 }
 
 public Action CommandSetStars(int client, int args)
-{                           
+{
 	char arg1[32], arg2[20];
 	GetCmdArg(1, arg1, sizeof(arg1));
 	GetCmdArg(2, arg2, sizeof(arg2));
