@@ -16,7 +16,7 @@
 #include <cstrike>
 #include <colors>
 
-#define PLUGIN_VERSION "1.5fix"
+#define PLUGIN_VERSION "1.6"
 #pragma newdecls required
 
 Handle hPluginEnable;
