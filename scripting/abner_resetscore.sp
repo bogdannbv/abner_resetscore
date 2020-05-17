@@ -132,7 +132,7 @@ public void OnClientPutInServer(int client)
 public Action MSG(Handle timer, any client)
 {
 	if(IsValidClient(client))
-		CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "Restored");
+		CPrintToChat(client, "{green}[ResetScore] \x01%t", "Restored");
 }
 public void PlayerDisconnect(Handle event,const char[] name,bool dontBroadcast)
 {
@@ -164,7 +164,7 @@ public Action CommandResetScore(int client, int args)
 {
 	if(GetConVarInt(hPluginEnable) == 0)
 	{
-		CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "Plugin Disabled");
+		CPrintToChat(client, "{green}[ResetScore] \x01%t", "Plugin Disabled");
 		return Plugin_Continue;
 	}
 
@@ -172,7 +172,7 @@ public Action CommandResetScore(int client, int args)
 	{
 		if(!CSGO || CS_GetClientAssists(client) == 0)
 		{
-			CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "Score 0");
+			CPrintToChat(client, "{green}[ResetScore] \x01%t", "Score 0");
 			return Plugin_Continue;
 		}
 	}
@@ -181,7 +181,7 @@ public Action CommandResetScore(int client, int args)
 	int money = GetEntProp(client, Prop_Send, "m_iAccount");
 	if(cost > 0 && money < cost)
 	{
-		CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "No Money", cost);
+		CPrintToChat(client, "{green}[ResetScore] \x01%t", "No Money", cost);
 		return Plugin_Continue;
 	}
 
@@ -194,20 +194,20 @@ public Action CommandResetScore(int client, int args)
 	{
 		if(GetClientTeam(client) == 2)
 		{
-			CPrintToChatAll("{green}[AbNeR ResetScore] \x01%t", "Player Reset Red", name);
+			CPrintToChatAll("{green}[ResetScore] \x01%t", "Player Reset Red", name);
 		}
 		else if(GetClientTeam(client) == 3)
 		{
-			CPrintToChatAll("{green}[AbNeR ResetScore] \x01%t", "Player Reset Blue", name);
+			CPrintToChatAll("{green}[ResetScore] \x01%t", "Player Reset Blue", name);
 		}
 		else
 		{
-			CPrintToChatAll("{green}[AbNeR ResetScore] \x01%t", "Player Reset Normal", name);
+			CPrintToChatAll("{green}[ResetScore] \x01%t", "Player Reset Normal", name);
 		}
 	}
 	else
 	{
-		CPrintToChat(client, "{green}[AbNeR ResetScore] \x01%t", "You Reset");
+		CPrintToChat(client, "{green}[ResetScore] \x01%t", "You Reset");
 	}
 	return Plugin_Continue;
 }
@@ -234,7 +234,7 @@ public Action CommandResetPlayer(int client, int args)
 
 	if (args != 1)
 	{
-		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_resetplayer <name or #userid>");
+		ReplyToCommand(client, "\x01[ResetScore] sm_resetplayer <name or #userid>");
 		return Plugin_Continue;
 	}
 
@@ -261,7 +261,7 @@ public Action CommandResetPlayer(int client, int args)
 	{
 		ResetPlayer(target_list[i]);
 	}
-	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Reset Score of", target_name);
+	ShowActivity2(client, "[ResetScore] ", "%t", "Reset Score of", target_name);
 	return Plugin_Continue;
 }
 
@@ -278,7 +278,7 @@ public Action CommandSetScore(int client, int args)
 
 	if (args != 4)
 	{
-		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setscore <name or #userid> <Kills> <Deaths><Stars>");
+		ReplyToCommand(client, "\x01[ResetScore] sm_setscore <name or #userid> <Kills> <Deaths><Stars>");
 		return Plugin_Continue;
 	}
 
@@ -308,7 +308,7 @@ public Action CommandSetScore(int client, int args)
 		CS_SetMVPCount(target_list[i], stars);
 	}
 
-	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Score", target_name);
+	ShowActivity2(client, "[ResetScore] ", "%t", "Set Score", target_name);
 	return Plugin_Continue;
 }
 
@@ -316,7 +316,7 @@ public Action CommandSetScoreCSGO(int client, int args)
 {
   	if (args != 6)
 	{
-		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setscore <name or #userid> <Kills> <Deaths><Assists><Stars><Points>");
+		ReplyToCommand(client, "\x01[ResetScore] sm_setscore <name or #userid> <Kills> <Deaths><Assists><Stars><Points>");
 		return Plugin_Continue;
 	}
 
@@ -361,7 +361,7 @@ public Action CommandSetScoreCSGO(int client, int args)
 		CS_SetClientContributionScore(target_list[i], points);
 	}
 
-	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Score", target_name);
+	ShowActivity2(client, "[ResetScore] ", "%t", "Set Score", target_name);
 	return Plugin_Continue;
 }
 
@@ -374,7 +374,7 @@ public Action CommandSetPoints(int client, int args)
 
 	if (args != 2)
 	{
-		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setpoints <name or #userid> <points>");
+		ReplyToCommand(client, "\x01[ResetScore] sm_setpoints <name or #userid> <points>");
 		return Plugin_Continue;
 	}
 
@@ -402,7 +402,7 @@ public Action CommandSetPoints(int client, int args)
 		CS_SetClientContributionScore(target_list[i], points);
 	}
 
-	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Points of", target_name, points);
+	ShowActivity2(client, "[ResetScore] ", "%t", "Set Points of", target_name, points);
 	return Plugin_Continue;
 }
 
@@ -415,7 +415,7 @@ public Action CommandSetAssists(int client, int args)
 
 	if (args != 2)
 	{
-		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setassists <name or #userid> <assists>");
+		ReplyToCommand(client, "\x01[ResetScore] sm_setassists <name or #userid> <assists>");
 		return Plugin_Continue;
 	}
 
@@ -443,7 +443,7 @@ public Action CommandSetAssists(int client, int args)
 		CS_SetClientAssists(target_list[i], assists);
 	}
 
-	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Assists of", target_name, assists);
+	ShowActivity2(client, "[ResetScore] ", "%t", "Set Assists of", target_name, assists);
 	return Plugin_Continue;
 }
 
@@ -456,7 +456,7 @@ public Action CommandSetStars(int client, int args)
 
 	if (args != 2)
 	{
-		ReplyToCommand(client, "\x01[AbNeR ResetScore] sm_setstars <name or #userid> <stars>");
+		ReplyToCommand(client, "\x01[ResetScore] sm_setstars <name or #userid> <stars>");
 		return Plugin_Continue;
 	}
 
@@ -482,7 +482,7 @@ public Action CommandSetStars(int client, int args)
 		CS_SetMVPCount(target_list[i], stars);
 	}
 
-	ShowActivity2(client, "[AbNeR ResetScore] ", "%t", "Set Stars of", target_name, stars);
+	ShowActivity2(client, "[ResetScore] ", "%t", "Set Stars of", target_name, stars);
 	return Plugin_Continue;
 }
 
